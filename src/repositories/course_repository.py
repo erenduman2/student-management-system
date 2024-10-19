@@ -12,8 +12,14 @@ class CourseRepository:
     def create(self):
         """Create new course in DB."""
 
-    def read(self):
-        """Read course in DB."""
+    @staticmethod
+    def read(course_id):
+        """Read course in DB.
+        :param course_id:
+        :type course_id: int
+        :return: Course object
+        :rtype: Course
+        """
 
     def delete(self):
         """Delete course in DB."""

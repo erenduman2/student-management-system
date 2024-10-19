@@ -14,7 +14,6 @@ class CourseService:
         """
         self.course = course
         self.course_rep = CourseRepository(course)
-        self.student_service = StudentService()
 
     def create_course(self):
         """Create new course. Check if exist before."""
@@ -38,9 +37,10 @@ class CourseService:
         :param student:
         :type student: Student
         """
-        if self.exists() and self.student_service.check_if_exists(student.student_id):
+        student_service = StudentService(student)
+        if self.exists() and student_service.exists():
             if not self.is_quota_full():
-                is_enrolled = self.student_service.enroll_to_course(student.student_id, self.course.id, self.course.credit)
+                is_enrolled = student_service.enroll_to_course(self.course)
                 if is_enrolled:
                     logging.info("Student {} {} successfully enrolled for the course {}.".format(student.first_name, student.last_name, self.course.name))
                 else:
