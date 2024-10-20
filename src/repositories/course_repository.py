@@ -1,7 +1,8 @@
+from src.models import Course, Student, Lecturer
 
 
 class CourseRepository:
-    def __init__(self, course):
+    def __init__(self, course: Course):
         """Connect to DB
         :param course:
         :type course: Course
@@ -13,7 +14,7 @@ class CourseRepository:
         """Create new course in DB."""
 
     @staticmethod
-    def read(course_id):
+    def read(course_id: int):
         """Read course in DB.
         :param course_id:
         :type course_id: int
@@ -30,11 +31,11 @@ class CourseRepository:
     def exists(self):
         """Check if course exists in DB."""
 
-    def enroll_a_student(self, student_id):
+    def enroll_student(self, student: Student):
         """Enroll student to a course"""
 
-    def is_student_enrolled(self, student):
+    def is_student_enrolled(self, student: Student):
         """Check if student is enrolled in DB."""
 
-    def assign_a_teacher(self, teacher):
+    def assign_a_teacher(self, lecturer: Lecturer):
         """Assign teacher to course"""

@@ -1,12 +1,12 @@
-from ..models.course import Course
-from ..models.lecturer import Lecturer
-from ..models.student import Student
-from ..repositories.student_repository import StudentRepository
+import logging
+
+from ..models import Course, Student
+from ..repositories import StudentRepository
 
 
 class StudentService:
 
-    def __init__(self, student):
+    def __init__(self, student: Student):
         self.student = student
         self.student_rep = StudentRepository(student)
 
@@ -38,20 +38,29 @@ class StudentService:
         """Get dates, times, and places of the courses that student is taking.
         """
 
-    def enroll_to_course(self, course):
-        """
+    # def enroll_to_course(self, course):
+    #     """
+    #     :param course:
+    #     :type course: Course
+    #     :return: True if student enrolled, false otherwise.
+    #      :rtype: bool
+    #     """
+    #     if self.can_take_the_course(course):
+    #         self.student_rep.enroll_to_course(course)
+    #         return True
+    #     else:
+    #         return False
+
+    def enroll_to_course(self, course: Course):
+        """Enroll a student to the course.
         :param course:
         :type course: Course
         :return: True if student enrolled, false otherwise.
          :rtype: bool
         """
-        if self.can_take_the_course(course):
-            self.student_rep.enroll_to_course(course)
-            return True
-        else:
-            return False
+        self.student_rep.enroll_to_course(course)
 
-    def can_take_the_course(self, course):
+    def can_take_the_course(self, course: Course):
         """Check if that student can take the course.
         Use two functions: is_credit_limit_exceeded and is_any_course_overlaps.
         :param course:
@@ -65,13 +74,13 @@ class StudentService:
             return False
 
 
-    def is_any_course_overlaps(self, course):
+    def is_any_course_overlaps(self, course: Course):
         """Check if given course overlaps with any other course.
         :param course:
         :type course: Course
         """
 
-    def is_credit_limit_exceeded(self, course):
+    def is_credit_limit_exceeded(self, course: Course):
         """Check if that student will exceed his/her credit limit with the new course_credit given.
         :param course:
         :type course: Course
@@ -79,4 +88,9 @@ class StudentService:
         """
 
     def exists(self):
-        return self.student_rep.exists()
+        if self.student_rep.exists():
+            return True
+        else:
+            logging.warning("Student {} {} does not exist".format(self.student.first_name, self.student.last_name))
+            return False
+

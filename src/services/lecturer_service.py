@@ -1,15 +1,13 @@
 import logging
 
-from .course_service import CourseService
-from ..models.course import Course
-from ..models.lecturer import Lecturer
-from ..models.student import Student
-from ..repositories.lecturer_repository import LecturerRepository
+from course_service import CourseService
+from ..models import Course, Lecturer
+from ..repositories import LecturerRepository
 
 
 class LecturerService:
 
-    def __init__(self, lecturer):
+    def __init__(self, lecturer: Lecturer):
         """
         :param lecturer:
         :type lecturer: Lecturer
@@ -30,7 +28,7 @@ class LecturerService:
         """
         self.lecturer_rep.delete()
 
-    def assign_to_course(self, course):
+    def assign_to_course(self, course: Course):
         """Assign a lecturer to the course. Check if the lecturer and course exists.
         :param course:
         :type course: Course

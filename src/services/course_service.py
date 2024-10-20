@@ -1,13 +1,10 @@
 import logging
 
-from ..models.course import Course
-from ..models.lecturer import Lecturer
-from ..models.student import Student
-from ..repositories.course_repository import CourseRepository
-from ..services.student_service import StudentService
+from ..models import Course, Student, Lecturer
+from ..repositories import CourseRepository
 
 class CourseService:
-    def __init__(self, course):
+    def __init__(self, course: Course):
         """
         :param course:
         :type course: Course
@@ -31,32 +28,48 @@ class CourseService:
         else:
             logging.warning("Course {} does not exist".format(self.course.id))
 
-    def enroll_student(self, student):
-        """Enroll student to the course.
+    # def enroll_student(self, student):
+    #     """Enroll student to the course.
+    #     Used functions: is_quota_full (in Course Class)
+    #     :param student:
+    #     :type student: Student
+    #     """
+    #     student_service = StudentService(student)
+    #     if self.exists() and student_service.exists():
+    #         if not self.is_quota_full():
+    #             is_enrolled = student_service.enroll_to_course(self.course)
+    #             if is_enrolled:
+    #                 logging.info("Student {} {} successfully enrolled for the course {}.".format(student.first_name, student.last_name, self.course.name))
+    #             else:
+    #                 logging.warning("Student {} {} failed to enroll for the course {}.".format(student.first_name, student.last_name, self.course.name))
+    #     else:
+    #         logging.warning("Course {} or Student {} does not exist.".format(self.course.id, student.student_id))
+
+    def enroll_student(self, student: Student):
+        """Enroll a student to the course.
         Used functions: is_quota_full (in Course Class)
         :param student:
         :type student: Student
         """
-        student_service = StudentService(student)
-        if self.exists() and student_service.exists():
-            if not self.is_quota_full():
-                is_enrolled = student_service.enroll_to_course(self.course)
-                if is_enrolled:
-                    logging.info("Student {} {} successfully enrolled for the course {}.".format(student.first_name, student.last_name, self.course.name))
-                else:
-                    logging.warning("Student {} {} failed to enroll for the course {}.".format(student.first_name, student.last_name, self.course.name))
-        else:
-            logging.warning("Course {} or Student {} does not exist.".format(self.course.id, student.student_id))
+        self.course_rep.enroll_student(student)
 
     def is_quota_full(self):
         """ Check if course is full.
         :return:
         :rtype: bool
         """
-        return self.course.current_quota >= self.course.max_quota
+        if self.course.current_quota >= self.course.max_quota:
+            logging.info("Quota of the course {} is full".format(self.course.name))
+            return True
+        else:
+            return False
 
     def exists(self):
-        return self.course_rep.exists()
+        if self.course_rep.exists():
+            return True
+        else:
+            logging.warning("Course {} does not exist".format(self.course.id))
+            return False
 
-    def assign_a_teacher(self, teacher):
-        self.course_rep.assign_a_teacher(teacher)
+    def assign_a_teacher(self, lecturer: Lecturer):
+        self.course_rep.assign_a_teacher(lecturer)

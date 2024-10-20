@@ -1,8 +1,8 @@
-
+from src.models import Course, Lecturer
 
 
 class LecturerRepository:
-    def __init__(self, lecturer):
+    def __init__(self, lecturer: Lecturer):
         """Connect to DB."""
         self.lecturer = lecturer
 
@@ -22,5 +22,5 @@ class LecturerRepository:
     def exists(self):
         """Check if lecturer exists in DB."""
 
-    def assign_a_course(self, course):
+    def assign_a_course(self, course: Course):
         """Assign a course to lecturer."""
