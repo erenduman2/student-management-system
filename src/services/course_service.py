@@ -57,3 +57,6 @@ class CourseService:
 
     def exists(self):
         return self.course_rep.exists()
+
+    def assign_a_teacher(self, teacher):
+        self.course_rep.assign_a_teacher(teacher)

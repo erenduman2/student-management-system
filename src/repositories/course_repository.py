@@ -36,3 +36,5 @@ class CourseRepository:
     def is_student_enrolled(self, student):
         """Check if student is enrolled in DB."""
 
+    def assign_a_teacher(self, teacher):
+        """Assign teacher to course"""
