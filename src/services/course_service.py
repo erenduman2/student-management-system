@@ -20,7 +20,6 @@ class CourseService:
         else:
             self.course_rep.create()
 
-
     def delete_course(self):
         """Delete course."""
         if self.exists():
@@ -53,8 +52,8 @@ class CourseService:
         """
         self.course_rep.enroll_student(student)
 
-    def is_quota_full(self):
-        """ Check if course is full.
+    def is_quota_full(self) -> bool:
+        """ Check if course is full and return True or False.
         :return:
         :rtype: bool
         """

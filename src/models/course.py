@@ -16,3 +16,5 @@ class Course:
         self.is_active = is_active
         self.current_quota = 0
         self.enrolled_students = []
+
+# dataclass

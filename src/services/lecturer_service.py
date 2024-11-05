@@ -18,9 +18,7 @@ class LecturerService:
 
 
     def create_lecturer(self):
-        """Create a new Lecturer.
-        :return:
-        """
+        """Create a new Lecturer."""
         self.lecturer_rep.create()
 
     def delete_lecturer(self):

@@ -17,39 +17,8 @@ class StudentService:
     def delete_student(self):
         self.student_rep.delete()
 
-    # @staticmethod
-    # def enroll_to_course(student_number, course_id):
-        """Enroll student to course. Check if that student eligible to take that course.
-        Algorithm:
-            Read the student from DB and Create new student object with the data from DB.
-            Read the course from DB and Create new course object with the data from DB.
-            Check if that student eligible to take that course with the METHODS from student class. (is_credit_limit_exceeded)
-            Course eligibility will be checked. (is_quota_full, inside the Course Class)
-            Pass objects to the method in CourseService. (enroll_student)
-            If everything's okay:
-                That student data(taken_courses, course_count, credit_count) will be UPDATED with the new student object.
-                Updates about course will be done by updating the quota and enrolled students. There's not going to be course object.
-        :param student_number:
-        :param course_id:
-        :return:
-        """
-
     def get_weekly_schedule(self):
-        """Get dates, times, and places of the courses that student is taking.
-        """
-
-    # def enroll_to_course(self, course):
-    #     """
-    #     :param course:
-    #     :type course: Course
-    #     :return: True if student enrolled, false otherwise.
-    #      :rtype: bool
-    #     """
-    #     if self.can_take_the_course(course):
-    #         self.student_rep.enroll_to_course(course)
-    #         return True
-    #     else:
-    #         return False
+        """Get dates, times, and places of the courses that student is taking."""
 
     def enroll_to_course(self, course: Course):
         """Enroll a student to the course.
