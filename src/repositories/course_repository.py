@@ -1,41 +1,134 @@
-from src.models import Course, Student, Lecturer
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+
+from src.models import Course, Lecturer
 
 
 class CourseRepository:
-    def __init__(self, course: Course):
-        """Connect to DB
-        :param course:
-        :type course: Course
-        :return:
-        """
-        self.course = course
 
-    def create(self):
+    # global_var = declare
+
+    @classmethod
+    def create_course(cls, course_data, db_session):
         """Create new course in DB."""
+        lecturer_id = course_data['lecturer_id']
+        code = course_data['code']
+        name = course_data['name']
+        credit = course_data['credit']
+        quota = course_data['quota']
+        student_count = course_data['student_count']
+        new_course = Course(lecturer_id=lecturer_id, code=code, name=name, credit=credit, quota=quota, student_count=student_count)
 
-    @staticmethod
-    def read(course_id: int):
-        """Read course in DB.
-        :param course_id:
-        :type course_id: int
-        :return: Course object
-        :rtype: Course
-        """
+        try:
+            with db_session as db:
+                db.add(new_course)
+                db.commit()
+                return True
+        except IntegrityError as e:
+            print("IntegrityError: ", e)
+            return False
+        except Exception as e:
+            print(e)
+            return False
 
-    def delete(self):
-        """Delete course in DB."""
+    @classmethod
+    def read_by_code(cls, code, db_session):
+        # passBLM1091
+        try:
+            with db_session as db:
+                # course = db.execute(select(Course.quota).where(Course.name == name)).scalar_one()
+                course = db.execute(select(Course).filter_by(code=code)).scalar_one()
+                # course = db.get(Course, 1)
 
-    def update(self):
+                # course = db.get(Course, {"id": 1})
+                # db.flush()
+                return course
+        except Exception as e:
+            print("IntegrityError: ", e)
+            return False
+
+    @classmethod
+    def read_by_name(cls, name, db_session):
+        # passBLM1091
+        try:
+            with db_session as db:
+                # course = db.execute(select(Course.quota).where(Course.name == name)).scalar_one()
+                course = db.execute(select(Course).filter_by(name=name)).scalar_one()
+                # course = db.get(Course, 1)
+
+                # course = db.get(Course, {"id": 1})
+                # db.flush()
+                return course
+        except Exception as e:
+            print("IntegrityError: ", e)
+            return False
+
+    @classmethod
+    def update_quota(cls, course_code, quota, db_session):
         """Update course in DB."""
+        try:
+            with db_session as db:
+                course = db.execute(select(Course).where(Course.code == course_code)).scalar_one()
+                course.quota = quota
+                course_quota = db.execute(select(Course.name).where(Course.code == course_code)).scalar_one()
+                print(course_quota)
+                db.commit()
+        except Exception as e:
+            print("Error: ", e)
 
-    def exists(self):
+    @classmethod
+    def delete_course(cls, course_code, db_session):
+        try:
+            with db_session as db:
+                course = db.execute(select(Course).where(Course.code == course_code)).scalar_one()
+                db.delete(course)
+                print("Deleting...")
+                db.commit()
+                print("Deleted.")
+
+        except Exception as e:
+            print("Error: ", e)
+
+    @classmethod
+    def exists(cls, course_code, db_session):
         """Check if course exists in DB."""
+        try:
+            with db_session as db:
+                course = db.execute(select(Course).where(Course.code == course_code)).scalar_one()
+                if not course:
+                    return False
+                else:
+                    return True
+        except Exception as e:
+            print("Error: ", e)
 
-    def enroll_student(self, student: Student):
+    @classmethod
+    def update_credit(cls, course_data, db_session):
+    # değiştirilebilir
+        """Update course in DB."""
+        try:
+            with db_session as db:
+                course = db.execute(select(Course).where(Course.code == course_data['code'])).scalar_one()
+                course.name = course_data['name']
+                course_name = db.execute(select(Course.name).where(Course.code == course_data['code'])).scalar_one()
+                print(course_name)
+                db.commit()
+        except Exception as e:
+            print("Error: ", e)
+
+    @classmethod
+    def assign_a_teacher(cls, course_code: str, lecturer: Lecturer, db_session):
+        """Assign teacher to course"""
+        try:
+            with db_session as db:
+                course = db.execute(select(Course).where(Course.code == course_code)).scalar_one()
+                course.lecturer = lecturer
+                db.commit()
+        except Exception as e:
+            print("Error: ", e)
+
+    @classmethod
+    def enroll_student(cls):
         """Enroll student to a course"""
 
-    def is_student_enrolled(self, student: Student):
-        """Check if student is enrolled in DB."""
 
-    def assign_a_teacher(self, lecturer: Lecturer):
-        """Assign teacher to course"""
