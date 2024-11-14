@@ -27,10 +27,10 @@ class CourseRepository:
                 return True
         except IntegrityError as e:
             print("IntegrityError: ", e)
-            return False
+            return None
         except Exception as e:
             print(e)
-            return False
+            return None
 
     @classmethod
     def read_by_code(cls, code, db_session):
@@ -46,7 +46,7 @@ class CourseRepository:
                 return course
         except Exception as e:
             print("IntegrityError: ", e)
-            return False
+            return None
 
     @classmethod
     def read_by_name(cls, name, db_session):
@@ -62,7 +62,7 @@ class CourseRepository:
                 return course
         except Exception as e:
             print("IntegrityError: ", e)
-            return False
+            return None
 
     @classmethod
     def update_quota(cls, course_code, quota, db_session):
@@ -75,8 +75,10 @@ class CourseRepository:
                 print(course_quota)
                 db.commit()
                 print("Course with code {} updated successfully".format(course_code))
+                return True
         except Exception as e:
             print("Error: ", e)
+            return False
 
     @classmethod
     def delete_course(cls, course_code, db_session):
@@ -87,9 +89,10 @@ class CourseRepository:
                 print("Deleting...")
                 db.commit()
                 print("Deleted.")
-
+                return True
         except Exception as e:
             print("Error: ", e)
+            return False
 
     @classmethod
     def exists(cls, course_code, db_session):
@@ -116,8 +119,10 @@ class CourseRepository:
                 print(course_name)
                 db.commit()
                 print("Course with code {} updated successfully".format(course_data["code"]))
+                return True
         except Exception as e:
             print("Error: ", e)
+            return False
 
     @classmethod
     def assign_a_teacher(cls, course_code: str, lecturer: Lecturer, db_session):
@@ -128,8 +133,10 @@ class CourseRepository:
                 course.lecturer = lecturer
                 db.commit()
                 print("Teacher assigned to course {}".format(course_code))
+                return True
         except Exception as e:
             print("Error: ", e)
+            return False
 
     @classmethod
     def enroll_student(cls):
