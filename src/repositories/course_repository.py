@@ -23,6 +23,7 @@ class CourseRepository:
             with db_session as db:
                 db.add(new_course)
                 db.commit()
+                print("Course with code {} created successfully".format(code))
                 return True
         except IntegrityError as e:
             print("IntegrityError: ", e)
@@ -73,6 +74,7 @@ class CourseRepository:
                 course_quota = db.execute(select(Course.name).where(Course.code == course_code)).scalar_one()
                 print(course_quota)
                 db.commit()
+                print("Course with code {} updated successfully".format(course_code))
         except Exception as e:
             print("Error: ", e)
 
@@ -113,6 +115,7 @@ class CourseRepository:
                 course_name = db.execute(select(Course.name).where(Course.code == course_data['code'])).scalar_one()
                 print(course_name)
                 db.commit()
+                print("Course with code {} updated successfully".format(course_data["code"]))
         except Exception as e:
             print("Error: ", e)
 
@@ -124,6 +127,7 @@ class CourseRepository:
                 course = db.execute(select(Course).where(Course.code == course_code)).scalar_one()
                 course.lecturer = lecturer
                 db.commit()
+                print("Teacher assigned to course {}".format(course_code))
         except Exception as e:
             print("Error: ", e)
 
