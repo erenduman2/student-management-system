@@ -1,24 +1,23 @@
 import logging
 
-from ..models import Course, Student, Lecturer
-from ..repositories import CourseRepository
+# from ..models import Course, Student, Lecturer
+# from ..repositories import CourseRepository
+from src.repositories import CourseRepository
 
 class CourseService:
-    def __init__(self, course: Course):
-        """
-        :param course:
-        :type course: Course
-        """
-        self.course = course
-        self.course_rep = CourseRepository(course)
+    def __init__(self, course_repository: CourseRepository):
+        self.course_repository = course_repository
 
-    def create_course(self):
+    def create_course(self, course_data):
         """Create new course. Check if exist before."""
 
-        if self.exists():
-            logging.warning("Course {} already exists".format(self.course.id))
+        if self.exists(course_data["code"]):
+            logging.warning("Course {} already exists".format(course_data["code"]))
         else:
-            self.course_rep.create()
+            self.course_repository.create(course_data)
+
+    def find_lecturer(self, lecturer_id, db_session):
+        pass
 
     def delete_course(self):
         """Delete course."""
@@ -63,11 +62,11 @@ class CourseService:
         else:
             return False
 
-    def exists(self):
-        if self.course_rep.exists():
+    def exists(self, course_code: str):
+        if self.course_repository.exists(course_code):
             return True
         else:
-            logging.warning("Course {} does not exist".format(self.course.id))
+            logging.warning("Course {} does not exist".format(course_code))
             return False
 
     def assign_a_teacher(self, lecturer: Lecturer):
