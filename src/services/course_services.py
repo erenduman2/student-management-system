@@ -2,14 +2,15 @@ import logging
 from sqlalchemy import select, exists
 from sqlalchemy.exc import IntegrityError
 
-from src.repositories import CourseRepository
-from src.models import Course, Lecturer
+from src.models import Course, Lecturer, Student, student_course
 
 
 class CourseServices:
     def __init__(self, db_session):
         self.db_session = db_session
 
+    #  Needs to be created with code, name, credit, quota params. Other attributes like students or lecturer will be
+    #  assigned specifically.
     def create_course(self, course_data):
         """Create new course. Check if exist before."""
 
@@ -17,20 +18,17 @@ class CourseServices:
             logging.warning("Course {} already exists".format(course_data["code"]))
             return False
         else:
-            lecturer_id = course_data['lecturer_id']
             code = course_data['code']
             name = course_data['name']
             credit = course_data['credit']
             quota = course_data['quota']
-            student_count = course_data['student_count']
-            new_course = Course(lecturer_id=lecturer_id, code=code, name=name, credit=credit, quota=quota,
-                                student_count=student_count)
+            new_course = Course(code=code, name=name, credit=credit, quota=quota)
 
             try:
                 with self.db_session as session:
                     session.add(new_course)
                     session.commit()
-                    print("Course with code {} created successfully".format(code))
+                    logging.info("Course with code {} created successfully".format(code))
                     return True
             except IntegrityError as e:
                 print("IntegrityError: ", e)
@@ -40,14 +38,33 @@ class CourseServices:
                 return False
 
     #  Bu kısımda DB işlemleri direkt olarak yapıldı. Kodların repository'ye taşınması gerekir mi diye kontrol et.
-    def find_lecturer(self, course_code, db_session):
+    #  FIXME: burada kurs ve hoca olup olmadığı kontrol edilmelidir.
+    def assign_lecturer(self, course_code, lecturer_id):
         try:
-            with db_session as db:
-                lecturer = db.execute(select(Course.lecturer).filter_by(code=course_code))
+            with self.db_session as session:
+                # lecturer = session.execute(select(Course.lecturer).filter_by(code=course_code))
+                lecturer = session.execute(select(Lecturer).filter_by(id=lecturer_id)).scalar_one()
+                course = session.execute(select(Course).filter_by(code=course_code)).scalar_one()
+                course.lecturer = lecturer
+                course.lecturer.id = lecturer.id
+                session.commit()
                 return lecturer
         except Exception as e:
             logging.error(e)
             return None
+
+    def get_lecturer(self, course_code):
+        with self.db_session as session:
+            course = session.execute(select(Course).filter_by(code=course_code)).scalar_one()
+            print("name: ", course.lecturer_id, course.lecturer.name)
+            for ass in course.lecturer.given_courses:
+                print(ass.name)
+
+            # for course in lecturer.name:
+            #     print(course.name)
+
+            # print("name: ", lecturer.given_courses)
+            # return lecturer
 
     def delete_course(self, course_code):
         """Delete course."""
@@ -83,63 +100,16 @@ class CourseServices:
             logging.warning("Course {} does not exist".format(code))
             return False
 
-    # def enroll_student(self, student):
-    #     """Enroll student to the course.
-    #     Used functions: is_quota_full (in Course Class)
-    #     :param student:
-    #     :type student: Student
-    #     """
-    #     student_service = StudentService(student)
-    #     if self.exists() and student_service.exists():
-    #         if not self.is_quota_full():
-    #             is_enrolled = student_service.enroll_to_course(self.course)
-    #             if is_enrolled:
-    #                 logging.info("Student {} {} successfully enrolled for the course {}.".format(student.first_name, student.last_name, self.course.name))
-    #             else:
-    #                 logging.warning("Student {} {} failed to enroll for the course {}.".format(student.first_name, student.last_name, self.course.name))
-    #     else:
-    #         logging.warning("Course {} or Student {} does not exist.".format(self.course.id, student.student_id))
-
-    # def enroll_student(self):
-    #     """Enroll a student to the course.
-    #     Used functions: is_quota_full (in Course Class)
-    #     :param student:
-    #     :type student: Student
-    #     """
-    #     self.course_rep.enroll_student(student)
-    #
-    # def assign_lecturer(self, lecturer_id, course_code):
-    #     with self.db_session as session:
-    #         lecturer = session.execute(select(Lecturer).filter_by(id=lecturer_id))
-    #         course = session.execute(select(Course).where(Course.code == course_code))
-    #         course.lecturer = lecturer
-    #         session.execute()
-    #
-    #         session.commit()
-    #
-    # def is_quota_full(self) -> bool:
-    #     """ Check if course is full and return True or False.
-    #     :return:
-    #     :rtype: bool
-    #     """
-    #     if self.course.current_quota >= self.course.max_quota:
-    #         logging.info("Quota of the course {} is full".format(self.course.name))
-    #         return True
-    #     else:
-    #         return False
-    #
     def exists(self, course_code: str):
         with self.db_session as session:
             result = session.query(exists().where(Course.code == course_code)).scalar()
-
             return result
-            # session.query(q.exists())
 
-        # if self.course_repository.exists(course_code):
-        #     return True
-        # else:
-        #     logging.warning("Course {} does not exist".format(course_code))
-        #     return False
-    #
-    # def assign_a_teacher(self, lecturer: Lecturer):
-    #     self.course_rep.assign_a_teacher(lecturer)
+    #  Ogrenciler sadece yazdırılıyor, gerekli ise return yap.
+    def get_enrolled_students(self, course_code):
+        with self.db_session as session:
+            # students = session.execute(select(Course.enrolled_students).where(Course.code == course_code).where(Student.id == Course.enrolled_students.id))
+            students = session.execute(select(Student).join(student_course).join(Course).where(Course.code == course_code)).all()
+            for student in students:
+                for row in student:
+                    print(row.name)
