@@ -48,7 +48,7 @@ class CourseService:
                 course.lecturer = lecturer
                 course.lecturer.id = lecturer.id
                 session.commit()
-                return lecturer
+                return True
         except Exception as e:
             logging.error(e)
             return None
@@ -56,15 +56,7 @@ class CourseService:
     def get_lecturer(self, course_code):
         with self.db_session as session:
             course = session.execute(select(Course).filter_by(code=course_code)).scalar_one()
-            print("name: ", course.lecturer_id, course.lecturer.name)
-            for ass in course.lecturer.given_courses:
-                print(ass.name)
-
-            # for course in lecturer.name:
-            #     print(course.name)
-
-            # print("name: ", lecturer.given_courses)
-            # return lecturer
+            return course.lecturer
 
     def delete_course(self, course_code):
         """Delete course."""
@@ -107,9 +99,12 @@ class CourseService:
 
     #  Ogrenciler sadece yazdırılıyor, gerekli ise return yap.
     def get_enrolled_students(self, course_code):
+        all_students = []
         with self.db_session as session:
             # students = session.execute(select(Course.enrolled_students).where(Course.code == course_code).where(Student.id == Course.enrolled_students.id))
             students = session.execute(select(Student).join(student_course).join(Course).where(Course.code == course_code)).all()
             for student in students:
                 for row in student:
                     print(row.name)
+                    all_students.append(row)
+        return all_students
