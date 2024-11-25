@@ -1,34 +1,12 @@
-from typing import Union
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
-from pydantic import BaseModel
 
 from src.database import db_session
 from src.services import StudentService
-# app = FastAPI()
+
+from ..schemas import Student, StudentCourse
+
 router = APIRouter(prefix="/student")
-
-
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
-class Course(BaseModel):
-    name: str
-    code: str
-    credit: int
-    quota: int
-class Student(BaseModel):
-    name: str
-    surname: str
-    ssn: str
-class Lecturer(BaseModel):
-    name: str
-    surname: str
-    ssn: str
-class StudentCourse(BaseModel):
-    student_ssn: str
-    course_code: str
 
 student_service = StudentService(db_session)
 
