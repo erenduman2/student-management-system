@@ -8,10 +8,10 @@ This project uses a combination of tools such as **FastAPI** to create API, **SQ
 ## Features
 
 - CRUD operations
-- **Student Management**
-- **Course Management**
-- **Lecturer Management**
-- **Student Enrollment**
+- Student Management
+- Course Management
+- Lecturer Management
+- Student Enrollment
 
 ---
 
