@@ -1,8 +1,7 @@
 # Student Management System
 
-This is a **Student Management System**, done based on previous work Student Management System in C. Motivation of this project is to improve and gain some skills on python.
+This is a **Student Management System**, originally inspired by a similar project implemented in C, this Python-based implementation aims to leverage modern tools and frameworks to improve scalability, maintainability, and performance.
 This project uses a combination of tools such as **FastAPI** to create API, **SQLAlchemy** to connect and handle database, **Pydantic** for data validation, **unittest** for testing, **Postgresql** for database, and **Docker** to use postgresql in container and connect with project.
-
 
 ---
 
