@@ -5,7 +5,6 @@ from src.models import Course, Lecturer
 
 class LecturerRepository:
 
-
     @classmethod
     def create_lecturer(cls, lecturer_data, db_session):
         """Create new lecturer in DB."""

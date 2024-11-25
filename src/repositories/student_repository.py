@@ -85,7 +85,7 @@ class StudentRepository:
     def get_courses(self):
         """Get courses that student has enrolled."""
 
-    def enroll_to_course(self, course: Course):
+    def enroll_to_course(self):
         """Enroll student to course."""
 
     def graduate(self):
