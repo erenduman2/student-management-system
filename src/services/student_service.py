@@ -46,6 +46,7 @@ class StudentService:
                 return True
         else:
             logging.warning("Student {} does not exist".format(student_ssn))
+            return False
 
     #  st ve cr varlığı kontrol edilmeli
     def enroll_to_course(self, student_ssn, course_code):
@@ -62,6 +63,7 @@ class StudentService:
 
             session.commit()
             print("Student {} is enrolled to the course {}.".format(student.name, course.name))
+            return True
 
     def course_deregister(self, st_id, cr_id):
         with self.db_session as session:
@@ -70,19 +72,25 @@ class StudentService:
             course.enrolled_students.remove(student)
             session.commit()
             print("Student {} is removed from the course {}.".format(student.name, course.name))
+            return True
 
     def get_courses(self, student_ssn):
+        all_courses = []
         with self.db_session as session:
             courses = session.execute(select(Course).join(student_course).join(Student).where(Student.ssn == student_ssn)).all()
             for course in courses:
                 for row in course:
-                    print("GET COURSES: ", row.name)
+                    print("GET STUDENT COURSES: ", row.name)
+                    all_courses.append(row)
+
+        return all_courses
 
     def exists(self, ssn: str):
         with self.db_session as session:
             result = session.query(exists().where(Student.ssn == ssn)).scalar()
             return result
 
+    #  YAPILMADI
     def get_weekly_schedule(self):
         """Get dates, times, and places of the courses that student is taking."""
 

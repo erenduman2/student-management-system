@@ -4,7 +4,9 @@ from sqlalchemy import exists, select
 from sqlalchemy.exc import IntegrityError
 
 # from course_service import CourseService
-from src.models import Course, Lecturer
+from src.models import Course, Lecturer, student_course, Student
+
+
 # from src.services import CourseServices
 
 
@@ -76,11 +78,12 @@ class LecturerService:
                 course = session.execute(select(Course).filter_by(code=course_code)).scalar_one()
                 course.lecturer = lecturer
                 course.lecturer.id = lecturer.id
+                lecturer.given_courses.append(course)
                 session.commit()
-                return lecturer
+                return True
         except Exception as e:
             logging.error(e)
-            return None
+            return False
 
     def exists(self, ssn: str):
         """ Check if lecturer exists.
@@ -92,7 +95,20 @@ class LecturerService:
             result = session.query(exists().where(Lecturer.ssn == ssn)).scalar()
             return result
 
+    #  FIXME: EXIST Kontrolü
+    def get_courses(self, id: int):
+        with self.db_session as session:
+            all_courses = []
+            courses = session.execute(select(Course).join(student_course).join(Student).where(Course.id == id)).all()
+            for course in courses:
+                for row in course:
+                    print("GET LECTURER COURSES: ", row.name)
+                    all_courses.append(row)
+            return all_courses
+
+    #  Yapılmayacak
     def get_weekly_schedule(self):
         """Get dates, times, and places of the courses that lecturer is giving.
         :return:
         """
+

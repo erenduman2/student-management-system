@@ -7,12 +7,12 @@ class EnrollmentService:
         pass
 
     @staticmethod
-    def enroll(student: Student, course: Course):
+    def enroll(student_id, course_id):
         """Enroll student to a course.
-        :param student:
-        :type student: Student
-        :param course:
-        :type course: Course
+        :param student_id:
+        :type student_id: Student
+        :param course_id:
+        :type course_id: Course
         :return:
         """
         student_service = StudentService(student)
