@@ -99,11 +99,15 @@ class LecturerService:
     def get_courses(self, id: int):
         with self.db_session as session:
             all_courses = []
-            courses = session.execute(select(Course).join(student_course).join(Student).where(Course.id == id)).all()
-            for course in courses:
-                for row in course:
-                    print("GET LECTURER COURSES: ", row.name)
-                    all_courses.append(row)
+            # courses = session.execute(select(Course).join(student_course).join(Student).where(Course.id == id)).all()
+            # for course in courses:
+            #     for row in course:
+            #         print("GET LECTURER COURSES: ", row.name)
+            #         all_courses.append(row)
+            lecturer = session.execute(select(Lecturer).where(Lecturer.id == id)).scalar_one()
+            for course in lecturer.given_courses:
+                all_courses.append(course)
+                print(course.name)
             return all_courses
 
     #  Yapılmayacak
