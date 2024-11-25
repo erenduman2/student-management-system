@@ -1,0 +1,6 @@
+container oluşturma
+    docker-compose up -d
+
+Docker Compose: dosya
+Volumes: veri taşıma ve kaydetme
+docker'ı hangi dosyalarla çalıştırırız.
