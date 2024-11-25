@@ -1,5 +1,3 @@
-from .lecturer import Lecturer
-from .course import Course
-from .student import Student
+from .models import Lecturer, Student, Course, student_course, Base
 
-__all__ = ["Student", "Course", "Lecturer"]
+__all__ = ["Lecturer", "Student", "Course", "student_course", "Base"]
