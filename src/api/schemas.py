@@ -6,14 +6,17 @@ class Course(BaseModel):
     code: str
     credit: int
     quota: int
-
 class Student(BaseModel):
     name: str
     surname: str
     ssn: str
-
 class Lecturer(BaseModel):
     name: str
     surname: str
     ssn: str
-
+class StudentCourse(BaseModel):
+    student_ssn: str
+    course_code: str
+class LecturerCourse(BaseModel):
+    lecturer_id: int
+    course_code: str
