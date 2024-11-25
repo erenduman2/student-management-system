@@ -10,7 +10,7 @@ app.include_router(lecturer_router.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello Bigger Applications!"}
+    return {"message": "Hello Student Management System!"}
 
 
 
