@@ -35,7 +35,7 @@ class LecturerCourse(BaseModel):
 
 course_service = CourseService(db_session)
 
-@app.post("/course/create_course")
+@router.post("/create_course")
 def create_course(course: Course):
     course_data = dict()
     course_data['name'] = course.name
@@ -45,7 +45,7 @@ def create_course(course: Course):
     ret = course_service.create_course(course_data)
 
     if not ret:
-        raise HTTPException(status_code=409, detail="Lecturer already exists..")
+        raise HTTPException(status_code=409, detail="Course already exists..")
 
     return {
         "status": "success",
@@ -53,7 +53,7 @@ def create_course(course: Course):
         "data": course_data
     }
 
-@app.delete("/course/delete_lecturer/{course_code}")
+@router.delete("/delete_course/{course_code}")
 def delete_course(course_code: str):
     # FIXME: Her tarafta ssn'leri id olarak değiştir.
     res = course_service.delete_course(course_code)
@@ -66,7 +66,7 @@ def delete_course(course_code: str):
         "message": "Course {} deleted successfully".format(course_code)
     }
 
-@app.put("/course/assign_lecturer")
+@router.put("/assign_lecturer")
 def assign_lecturer(lecturer_course: LecturerCourse):
     res = course_service.assign_lecturer(lecturer_course.course_code, lecturer_course.lecturer_id)
     if res:
@@ -77,7 +77,7 @@ def assign_lecturer(lecturer_course: LecturerCourse):
     else:
         raise HTTPException(status_code=409, detail="Lecturer or Course does not exist.")
 
-@app.get("/course/get_lecturer/{course_code}")
+@router.get("/get_lecturer/{course_code}")
 def get_lecturer(course_code: str):
     res = course_service.get_lecturer(course_code)
     if not res:
@@ -87,7 +87,7 @@ def get_lecturer(course_code: str):
         "lecturer": res
     }
 
-@app.put("/course/update_course")
+@router.put("/update_course")
 def update_course(course: Course):
     ret = course_service.update_course(course.name, course.code, course.credit, course.quota)
     if not ret:
@@ -97,11 +97,11 @@ def update_course(course: Course):
         "message": "Course updated successfully",
     }
 
-@app.get("/course/get_enrolled_students/{course_code}")
+@router.get("/get_enrolled_students/{course_code}")
 def get_enrolled_students(course_code: str):
     res = course_service.get_enrolled_students(course_code)
     if not res:
-        raise HTTPException(status_code=409, detail="Course does not exist.")
+        raise HTTPException(status_code=409, detail="There is no course or enrolled students.")
 
     return {
         "status": "success",

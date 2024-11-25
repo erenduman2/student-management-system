@@ -1,11 +1,13 @@
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 
 from src.database import db_session
 from src.services import StudentService
-app = FastAPI()
+# app = FastAPI()
+router = APIRouter(prefix="/student")
+
 
 class Item(BaseModel):
     name: str
@@ -30,7 +32,7 @@ class StudentCourse(BaseModel):
 
 student_service = StudentService(db_session)
 
-@app.post("/student/new_student")
+@router.post("/create_student")
 def create_student(student: Student):
     student_data = dict()
     student_data['name'] = student.name
@@ -49,7 +51,7 @@ def create_student(student: Student):
         "data": student_data
     }
 
-@app.delete("/student/delete_student/{student_id}")
+@router.delete("/delete_student/{student_id}")
 def delete_student(student_id: str):
     # FIXME: Her tarafta ssn'leri id olarak değiştir.
     student_ssn = student_id
@@ -63,7 +65,7 @@ def delete_student(student_id: str):
         "message": "Student {} deleted successfully".format(student_ssn)
     }
 
-@app.post("/student/enroll_to_course")
+@router.post("/enroll_to_course")
 def enroll_to_course(student_course: StudentCourse):
     res = student_service.enroll_to_course(student_course.student_ssn, student_course.course_code)
     if res:
@@ -74,7 +76,7 @@ def enroll_to_course(student_course: StudentCourse):
     else:
         raise HTTPException(status_code=409, detail="Student or Course does not exist.")
 
-@app.delete("/student/course_deregister")
+@router.delete("/course_deregister")
 def course_deregister(student_course: StudentCourse):
     res = student_service.course_deregister(student_course.student_ssn, student_course.course_code)
     if not res:
@@ -83,7 +85,7 @@ def course_deregister(student_course: StudentCourse):
         "status": "success",
         "message": "Student is deregistered successfully."
     }
-@app.get("/student/get_courses")
+@router.get("/get_courses")
 def get_courses(student_ssn: str):
     courses = student_service.get_courses(student_ssn)
     return courses
