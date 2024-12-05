@@ -65,10 +65,10 @@ class StudentService:
             print("Student {} is enrolled to the course {}.".format(student.name, course.name))
             return True
 
-    def course_deregister(self, st_id, cr_id):
+    def course_deregister(self, student_ssn, course_code):
         with self.db_session as session:
-            student = session.execute(select(Student).where(Student.id == st_id)).scalar_one()
-            course = session.execute(select(Course).where(Course.id == cr_id)).scalar_one()
+            student = session.execute(select(Student).where(Student.ssn == student_ssn)).scalar_one()
+            course = session.execute(select(Course).where(Course.code == course_code)).scalar_one()
             course.enrolled_students.remove(student)
             session.commit()
             print("Student {} is removed from the course {}.".format(student.name, course.name))
