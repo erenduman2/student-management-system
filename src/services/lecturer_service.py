@@ -26,6 +26,8 @@ class LecturerService:
     #  Params are only name, surname and ssn. Other should be updated with other functions.
     def create_lecturer(self, lecturer_data):
         """Create a new Lecturer."""
+        assert "ssn" in lecturer_data, "SSN is mandatory"
+
         if self.exists(lecturer_data["ssn"]):
             logging.warning("Lecturer {} already exists".format(lecturer_data["ssn"]))
             return False
@@ -63,7 +65,7 @@ class LecturerService:
         else:
             logging.warning("Lecturer {} does not exist".format(lecturer_ssn))
 
-    def add_course(self, course_code, lecturer_id):
+    def add_course(self, course_code, lecturer_ssn):
         """Assign a lecturer to the course. Check if the lecturer and course exists.
         :param course_code:
         :type course_code: str
@@ -74,7 +76,7 @@ class LecturerService:
         try:
             with self.db_session as session:
                 # lecturer = session.execute(select(Course.lecturer).filter_by(code=course_code))
-                lecturer = session.execute(select(Lecturer).filter_by(id=lecturer_id)).scalar_one()
+                lecturer = session.execute(select(Lecturer).filter_by(ssn=lecturer_ssn)).scalar_one()
                 course = session.execute(select(Course).filter_by(code=course_code)).scalar_one()
                 course.lecturer = lecturer
                 course.lecturer.id = lecturer.id
