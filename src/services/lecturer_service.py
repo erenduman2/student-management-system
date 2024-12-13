@@ -24,8 +24,13 @@ class LecturerService:
 
 
     #  Params are only name, surname and ssn. Other should be updated with other functions.
-    def create_lecturer(self, lecturer_data):
-        """Create a new Lecturer."""
+    def create_lecturer(self, lecturer_data: dict) -> bool:
+        """
+        Create a new lecturer and return True if successful.
+
+        Keyword arguments:
+            lecturer_data -- Dictionary of lecturer data.
+        """
         assert "ssn" in lecturer_data, "SSN is mandatory"
 
         if self.exists(lecturer_data["ssn"]):
@@ -51,8 +56,12 @@ class LecturerService:
                 print(e)
                 return False
 
-    def delete_lecturer(self, lecturer_ssn):
-        """Delete a Lecturer.
+    def delete_lecturer(self, lecturer_ssn: str) -> bool:
+        """
+        Delete an existing lecturer and return True if successful.
+
+        Keyword arguments:
+            lecturer_ssn -- SSN of the lecturer.
         """
         if self.exists(lecturer_ssn):
             with self.db_session as session:
@@ -65,13 +74,12 @@ class LecturerService:
         else:
             logging.warning("Lecturer {} does not exist".format(lecturer_ssn))
 
-    def add_course(self, course_code, lecturer_ssn):
-        """Assign a lecturer to the course. Check if the lecturer and course exists.
-        :param course_code:
-        :type course_code: str
-        :param lecturer_id:
-        :type lecturer_id: int
-        :return:
+    def add_course(self, course_code: str, lecturer_ssn: str) -> bool :
+        """Assign a lecturer to the course. Check if the lecturer and course exists. Return True if successful.
+
+        Keyword arguments:
+            course_code -- Course code.
+            lecturer_ssn -- SSN of the lecturer.
         """
         try:
             with self.db_session as session:
@@ -87,18 +95,27 @@ class LecturerService:
             logging.error(e)
             return False
 
-    def exists(self, ssn: str):
-        """ Check if lecturer exists.
-        :return:
-        :rtype: bool
+    def exists(self, lecturer_ssn: str) -> Lecturer:
+        """
+        Check if lecturer exists.
+
+        Keyword arguments:
+            lecturer_ssn -- SSN of the lecturer.
         """
         # return self.lecturer_rep.exists()
         with self.db_session as session:
-            result = session.query(exists().where(Lecturer.ssn == ssn)).scalar()
+            result = session.query(exists().where(Lecturer.ssn == lecturer_ssn)).scalar()
             return result
 
     #  FIXME: EXIST Kontrolü
-    def get_courses(self, id: int):
+    def get_courses(self, lecturer_id: int) -> list[Course]:
+        """
+        Get courses of a lecturer and return all courses.
+
+        Keyword arguments:
+            lecturer_id -- ID of the lecturer.
+
+        """
         with self.db_session as session:
             all_courses = []
             # courses = session.execute(select(Course).join(student_course).join(Student).where(Course.id == id)).all()
@@ -106,7 +123,7 @@ class LecturerService:
             #     for row in course:
             #         print("GET LECTURER COURSES: ", row.name)
             #         all_courses.append(row)
-            lecturer = session.execute(select(Lecturer).where(Lecturer.id == id)).scalar_one()
+            lecturer = session.execute(select(Lecturer).where(Lecturer.id == lecturer_id)).scalar_one()
             for course in lecturer.given_courses:
                 all_courses.append(course)
                 print(course.name)

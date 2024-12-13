@@ -1,4 +1,6 @@
 import logging
+from typing import Union
+
 from sqlalchemy import select, exists
 from sqlalchemy.exc import IntegrityError
 
@@ -11,8 +13,13 @@ class CourseService:
 
     #  Needs to be created with code, name, credit, quota params. Other attributes like students or lecturer will be
     #  assigned specifically.
-    def create_course(self, course_data):
-        """Create new course. Check if exist before."""
+    def create_course(self, course_data: dict) -> bool:
+        """
+        Create a student and return True if successful.
+
+        Keyword arguments:
+            course_data -- Dictionary of course data
+        """
 
         if self.exists(course_data["code"]):
             logging.warning("Course {} already exists".format(course_data["code"]))
@@ -37,9 +44,14 @@ class CourseService:
                 print(e)
                 return False
 
-    #  Bu kısımda DB işlemleri direkt olarak yapıldı. Kodların repository'ye taşınması gerekir mi diye kontrol et.
-    #  FIXME: burada kurs ve hoca olup olmadığı kontrol edilmelidir.
-    def assign_lecturer(self, course_code, lecturer_id):
+    def assign_lecturer(self, course_code: str, lecturer_id: int) -> bool:
+        """
+        Assign a lecturer to a course. Return True if successful.
+
+        Keyword arguments:
+            course_code -- Course code
+            lecturer_id -- Lecturer id
+        """
         try:
             with self.db_session as session:
                 # lecturer = session.execute(select(Course.lecturer).filter_by(code=course_code))
@@ -53,13 +65,23 @@ class CourseService:
             logging.error(e)
             return None
 
-    def get_lecturer(self, course_code):
+    def get_lecturer(self, course_code: str) -> Lecturer:
+        """
+        Get lecturer of a course. Return lecturer object if successful.
+        Keyword arguments:
+            course_code -- Course code
+        """
         with self.db_session as session:
             course = session.execute(select(Course).filter_by(code=course_code)).scalar_one()
             return course.lecturer
 
-    def delete_course(self, course_code):
-        """Delete course."""
+    def delete_course(self, course_code: str) -> bool:
+        """
+        Delete a course. Return True if successful.
+
+        Keyword arguments:
+            course_code -- Course code
+        """
         if self.exists(course_code):
             with self.db_session as session:
                 course = session.execute(select(Course).where(Course.code == course_code)).scalar_one()
@@ -73,7 +95,13 @@ class CourseService:
             return False
 
     #  Some can only update name, credit or quota with this function. The others should be done via other functions.
-    def update_course(self, code, name=None, credit=None, quota=None):
+    def update_course(self, code: str, name=None, credit=None, quota=None) -> bool:
+        """
+        Update a course. Return True if successful.
+
+        Keyword arguments:
+            code -- Course code
+        """
         if self.exists(code):
             with self.db_session as session:
                 course = session.execute(select(Course).where(Course.code == code)).scalar_one()
@@ -92,13 +120,25 @@ class CourseService:
             logging.warning("Course {} does not exist".format(code))
             return False
 
-    def exists(self, course_code: str):
+    def exists(self, course_code: str) -> Course | None:
+        """
+        Check if a course exists.
+
+        Keyword arguments:
+            course_code -- Course code
+        """
         with self.db_session as session:
             result = session.query(exists().where(Course.code == course_code)).scalar()
             return result
 
     #  Ogrenciler sadece yazdırılıyor, gerekli ise return yap.
-    def get_enrolled_students(self, course_code):
+    def get_enrolled_students(self, course_code: str) -> list[Student]:
+        """
+        Find and return enrolled students of a course.
+
+        Keyword arguments:
+            course_code -- Course code
+        """
         all_students = []
         with self.db_session as session:
             # students = session.execute(select(Course.enrolled_students).where(Course.code == course_code).where(Student.id == Course.enrolled_students.id))
