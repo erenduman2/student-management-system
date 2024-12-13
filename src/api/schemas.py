@@ -17,5 +17,5 @@ class StudentCourse(BaseModel):
     student_ssn: str
     course_code: str
 class LecturerCourse(BaseModel):
-    lecturer_id: int
+    lecturer_ssn: str
     course_code: str

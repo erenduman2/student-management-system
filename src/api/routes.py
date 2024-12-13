@@ -2,6 +2,10 @@ from fastapi import FastAPI
 
 from .routers import course_router, student_router, lecturer_router
 
+from src.database import engine
+from src.models import Base
+
+Base.metadata.create_all(engine)
 app = FastAPI()
 
 app.include_router(course_router.router)

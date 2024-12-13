@@ -127,37 +127,3 @@ class StudentService:
         with self.db_session as session:
             result = session.query(exists().where(Student.ssn == ssn)).scalar()
             return result
-
-    #  YAPILMADI
-    def get_weekly_schedule(self):
-        """Get dates, times, and places of the courses that student is taking."""
-
-    #  Yapılmayacak
-    def can_take_the_course(self, course: Course):
-        """
-        Check if that student can take the course.
-        Use two functions: is_credit_limit_exceeded and is_any_course_overlaps.
-        :param course:
-        :type course: Course
-        :return: Boolean indicating if the student can take the course.
-        :rtype: bool
-        """
-        if (not self.is_any_course_overlaps(course)) and (not self.is_credit_limit_exceeded(course)):
-            return True
-        else:
-            return False
-
-    #  Yapılmayacak
-    def is_any_course_overlaps(self, course: Course):
-        """Check if given course overlaps with any other course.
-        :param course:
-        :type course: Course
-        """
-
-    #  Yapılmayacak
-    def is_credit_limit_exceeded(self, course: Course):
-        """Check if that student will exceed his/her credit limit with the new course_credit given.
-        :param course:
-        :type course: Course
-        :return
-        """

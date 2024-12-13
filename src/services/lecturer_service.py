@@ -107,7 +107,6 @@ class LecturerService:
             result = session.query(exists().where(Lecturer.ssn == lecturer_ssn)).scalar()
             return result
 
-    #  FIXME: EXIST Kontrolü
     def get_courses(self, lecturer_id: int) -> list[Course]:
         """
         Get courses of a lecturer and return all courses.
@@ -129,9 +128,4 @@ class LecturerService:
                 print(course.name)
             return all_courses
 
-    #  Yapılmayacak
-    def get_weekly_schedule(self):
-        """Get dates, times, and places of the courses that lecturer is giving.
-        :return:
-        """
 

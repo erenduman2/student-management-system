@@ -131,7 +131,6 @@ class CourseService:
             result = session.query(exists().where(Course.code == course_code)).scalar()
             return result
 
-    #  Ogrenciler sadece yazdırılıyor, gerekli ise return yap.
     def get_enrolled_students(self, course_code: str) -> list[Student]:
         """
         Find and return enrolled students of a course.

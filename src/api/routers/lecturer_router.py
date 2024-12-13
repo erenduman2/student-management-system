@@ -42,7 +42,7 @@ def delete_lecturer(lecturer_ssn: str):
 
 @router.put("/add_course")
 def add_course(lecturer_course: LecturerCourse):
-    res = lecturer_service.add_course(lecturer_course.course_code, lecturer_course.lecturer_id)
+    res = lecturer_service.add_course(lecturer_course.course_code, lecturer_course.lecturer_ssn)
     if res:
         return {
             "status": "success",
@@ -60,11 +60,3 @@ def get_courses(lecturer_id: int):
         "status": "success",
         "courses": res
     }
-
-# @app.exception_handler(RequestValidationError)
-# async def validation_exception_handler(request, exc):
-#     print("There is a problem.")
-#     return JSONResponse(
-#         status_code=422,
-#         content={"message": "Veri doğrulama hatası!", "errors": exc.errors()},
-#     )
