@@ -1,0 +1,6 @@
+.venv/
+db_schema/
+depo/
+docker/
+docker_all/
+tests/
